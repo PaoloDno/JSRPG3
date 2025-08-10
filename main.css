@@ -5,9 +5,11 @@
 }
 
 :root {
-  --mainCLR: hsl(0, 0%, 0%);
-  --subCLR: hsl(23, 11%, 11%);
+  --mainCLR: hsl(36, 93%, 48%);
+  --subCLR: hsl(15, 67%, 1%);
+  --btnCLR: #a87507;
   --txtCLR: hsl(51, 50%, 85%);
+  --disCLR: hsl(0, 0%, 24%);
 }
 
 body {
@@ -26,24 +28,23 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: radial-gradient(
-    circle,
-    rgba(20, 10, 10, 0.6) 50%,
-    rgba(53, 25, 25, 0.8) 80%,
-    rgba(41, 12, 12, 0.9) 100%
+  background: linear-gradient(
+    rgba(39, 31, 87, 0.6) 50%,
+    rgba(68, 47, 128, 0.8) 80%,
+    rgba(8, 6, 6, 0.9) 100%
   );
 }
 
 #top {
   position: relative;
-  height: clamp(100px, 20vh, 200px); /* min 100px, ideal 20vh, max 200px */
+  height: clamp(80px, 120px, 140px); /* min 100px, ideal 20vh, max 200px */
   width: 85%;
   max-width: 720px;
   background: rgba(250, 248, 248, 0.95);
   margin-bottom: 1rem;
 }
 
-#bottom {
+#content {
   position: relative;
   height: clamp(300px, 60vh, 500px); /* min 300px, ideal 60vh, max 500px */
   width: 85%;
@@ -51,18 +52,27 @@ body {
   background: #9c8989;
 }
 
+#bottom {
+
+}
+
 @media (max-width: 480px) {
   #top,
+  #content,
   #bottom {
     width: 95%;
     min-width: none;
   }
 
   #top {
-    height: 25vh;
+    height: 15vh;
+  }
+
+  #content {
+    height: 50vh;
   }
 
   #bottom {
-    height: 65vh;
+    height: 25vh;
   }
 }
