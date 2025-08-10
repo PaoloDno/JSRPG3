@@ -37,23 +37,31 @@ body {
 
 #top {
   position: relative;
-  height: clamp(80px, 120px, 140px); /* min 100px, ideal 20vh, max 200px */
+  display: flex;
+  height: clamp(80px, 100px, 140px); /* min 100px, ideal 120px, max 200px */
   width: 85%;
   max-width: 720px;
-  background: rgba(250, 248, 248, 0.95);
+  background: rgba(19, 15, 15, 0.95);
   margin-bottom: 1rem;
 }
 
 #content {
   position: relative;
-  height: clamp(300px, 60vh, 500px); /* min 300px, ideal 60vh, max 500px */
+  display: flex;
+  height: clamp(300px, 300px, 500px); /* min 300px, ideal 60vh, max 500px */
   width: 85%;
   max-width: 720px;
-  background: #9c8989;
+  background: #141111;
 }
 
 #bottom {
-
+  position: relative;
+  display: flex;
+  height: clamp(120px, 140px, 140px );
+  width: 85%;
+  max-width: 720px;
+  background: black;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 480px) {
