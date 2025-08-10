@@ -14,7 +14,8 @@
 
 body {
   background-color: rgb(22, 16, 16);
-  color: var(--textColor);
+  color: var(--txtCLR);
+
   font-family: Arial, sans-serif;
   overflow: hidden; /* Prevents unnecessary scroll */
 }
@@ -29,10 +30,18 @@ body {
   height: 100vh;
   overflow: hidden;
   background: linear-gradient(
-    rgba(39, 31, 87, 0.6) 50%,
-    rgba(68, 47, 128, 0.8) 80%,
-    rgba(8, 6, 6, 0.9) 100%
-  );
+    45deg,
+    rgb(2, 10, 27) 35%,
+    rgb(12, 2, 70) 40%,
+    rgb(29, 5, 136) 41%,
+    rgb(2, 20, 58) 46%,
+    rgb(1, 6, 26) 100%);
+}
+
+#top, #content, #bottom {
+  padding: 10px;
+  border-radius: 20px;
+  border: 2px solid white;
 }
 
 #top {
@@ -41,8 +50,10 @@ body {
   height: clamp(80px, 100px, 140px); /* min 100px, ideal 120px, max 200px */
   width: 85%;
   max-width: 720px;
-  background: rgba(19, 15, 15, 0.95);
+  background: rgba(2, 0, 0, 0.95);
   margin-bottom: 1rem;
+
+  color: var(--txtCLR);
 }
 
 #content {
@@ -51,7 +62,12 @@ body {
   height: clamp(300px, 300px, 500px); /* min 300px, ideal 60vh, max 500px */
   width: 85%;
   max-width: 720px;
-  background: #141111;
+  background: #070303;
+  margin-bottom: 1rem;
+
+  color: var(--txtCLR);
+
+  flex: 1;
 }
 
 #bottom {
@@ -62,6 +78,8 @@ body {
   max-width: 720px;
   background: black;
   margin-bottom: 1rem;
+
+  color: var(--txtCLR);
 }
 
 @media (max-width: 480px) {
