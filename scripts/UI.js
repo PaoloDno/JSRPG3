@@ -1,4 +1,7 @@
 import { startNewGameScreen } from "./CharacterCreation.js";
+import Players from "./Players.js";
+
+const { listSlots, loadPlayer } = Players;
 
 class GAMEUI {
   constructor() {
@@ -7,7 +10,6 @@ class GAMEUI {
     this.bot = document.getElementById("bottom");
 
     this.injectStyles();
-
     this.showTitleScreen();
   }
 
@@ -28,59 +30,17 @@ class GAMEUI {
     if (loadGameBtn) {
       loadGameBtn.addEventListener("click", () => {
         console.log("Load Game!");
-        let slots = JSON.parse(
-          localStorage.getItem("playerData.slots") || "[]"
-        );
-
-        if (slots.length === 0) {
-          this.app.innerHTML = `
-        <div class="flex column center full">
-          <p>No save slots found.</p>
-        </div>
-      `;
-        } else {
-          this.app.innerHTML = `
-        <div class="flex column center full">
-          <h2>Select Save Slot</h2>
-          <div class="flex row">
-            ${slots
-              .map(
-                (slot, i) => `
-              <div class="slot-card">
-                <h3>Slot ${i + 1}</h3>
-                <p>${slot?.playerName || "Empty"}</p>
-                <button data-slot="${i}">Load</button>
-              </div>
-            `
-              )
-              .join("")}
-          </div>
-        </div>
-      `;
-
-          // add listeners to slot buttons
-          document.querySelectorAll(".slot-card button").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              let slotIndex = btn.dataset.slot;
-              console.log("Loading slot:", slotIndex, slots[slotIndex]);
-              // load into game state here
-            });
-          });
-        }
+        this.loadGameTitleScreen();
       });
     }
   }
 
   bannerScreen() {
-    return `
-      <div class="banner flex full center">banner here</div>
-    `;
+    return `<div class="banner flex full center">banner here</div>`;
   }
 
   loadingScreen() {
-    return `
-      <div class=""></div>
-    `;
+    return `<div class="flex center full">Loading...</div>`;
   }
 
   createTitleScreen() {
@@ -109,7 +69,53 @@ class GAMEUI {
     `;
   }
 
-  loadGameTitleScreen() {}
+  loadGameTitleScreen() {
+    let slots = listSlots();
+
+    // if all slots are null
+    const allEmpty = slots.every(s => s.player === null);
+
+    if (allEmpty) {
+      this.app.innerHTML = `
+        <div class="flex column center full">
+          <p>No save slots found.</p>
+        </div>
+      `;
+    } else {
+      this.app.innerHTML = `
+        <div class="flex column center full">
+          <h2>Select Save Slot</h2>
+          <div class="flex row">
+            ${slots
+              .map(
+                (slot) => `
+                  <div class="slot-card">
+                    <h3>Slot ${slot.slot}</h3>
+                    <p>${slot.player ? slot.player.name : "Empty"}</p>
+                    <button data-slot="${slot.slot}">Load</button>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+      `;
+
+      // Add listeners to slot buttons
+      document.querySelectorAll(".slot-card button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const slotIndex = parseInt(btn.dataset.slot);
+          console.log("Loading slot:", slotIndex);
+
+          const loaded = loadPlayer(slotIndex);
+          if (loaded) {
+            console.log("Game loaded:", loaded);
+            // TODO: transition into actual game UI
+          }
+        });
+      });
+    }
+  }
 
   //css
   injectStyles() {
@@ -121,11 +127,11 @@ class GAMEUI {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.7); /* dark transparent */
+        background: rgba(0,0,0,0.7);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000; /* above everything */
+        z-index: 1000;
       }
       .modal-box {
         background: white;
@@ -137,6 +143,14 @@ class GAMEUI {
       }
       .modal-box button {
         margin-top: 10px;
+      }
+      .slot-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        min-width: 120px;
+        text-align: center;
       }
     `;
     document.head.appendChild(style);

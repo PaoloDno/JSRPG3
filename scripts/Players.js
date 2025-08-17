@@ -1,5 +1,3 @@
-// import gameUI from "./UI.js";
-
 let player = {
   name: null,
   class: null,
@@ -15,38 +13,39 @@ let player = {
   blessings: null
 };
 
-// Load active session
-const savedPlayer = JSON.parse(localStorage.getItem("playerData.active"));
-if (savedPlayer) {
-  player = savedPlayer;
-}
+// Load or initialize playerData
+let playerData = JSON.parse(localStorage.getItem("playerData")) || {
+  active: player,
+  slots: [null, null, null] // up to 3 slots
+};
 
-/* If no name, go to title screen
-if (!player.name) {
+// If a saved active exists, load it into player
+if (playerData.active) {
+  player = playerData.active;
 }
-
-*/
 
 function saveAttributes(attributes, vitalStats) {
   player.attributes = attributes;
   player.vitalStats = vitalStats;
+  playerData.active = player;
+  localStorage.setItem("playerData", JSON.stringify(playerData));
 }
 
-function savePlayer(slot = 1) {
-  // Save into slot
-  localStorage.setItem(`playerSlot_${slot}`, JSON.stringify(player));
+function savePlayer(slot = 1, savedata = player) {
+  // Slot index is slot-1 (slots array is 0-based)
+  playerData.slots[slot - 1] = savedata;
+  playerData.active = savedata;
 
-  // Also update active save
-  localStorage.setItem("playerData.active", JSON.stringify(player));
-
-  console.log(`Game saved to slot ${slot}`);
+  localStorage.setItem("playerData", JSON.stringify(playerData));
+  console.log(`Game saved to slot ${slot}:`, savedata);
 }
 
 function loadPlayer(slot = 1) {
-  const saved = JSON.parse(localStorage.getItem(`playerSlot_${slot}`));
+  const saved = playerData.slots[slot - 1];
   if (saved) {
     player = saved;
-    localStorage.setItem("playerData.active", JSON.stringify(player));
+    playerData.active = player;
+    localStorage.setItem("playerData", JSON.stringify(playerData));
     console.log(`Loaded player from slot ${slot}`);
     return player;
   } else {
@@ -55,16 +54,11 @@ function loadPlayer(slot = 1) {
   }
 }
 
-function listSlots(maxSlots = 3) {
-  const slots = [];
-  for (let i = 1; i <= maxSlots; i++) {
-    const data = JSON.parse(localStorage.getItem(`playerSlot_${i}`));
-    slots.push({
-      slot: i,
-      player: data || null
-    });
-  }
-  return slots;
+function listSlots() {
+  return playerData.slots.map((data, i) => ({
+    slot: i + 1,
+    player: data
+  }));
 }
 
 export default {

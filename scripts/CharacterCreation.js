@@ -122,9 +122,9 @@ function confirmCharacter() {
     }
   };
 
-  console.log("Character Created:", newCharacter, attributes);
-  saveAttributes(attributes, vitalStats);
-  savePlayer(1);
+  console.log( "Character Created:", newCharacter, attributes);
+  saveAttributes( attributes, vitalStats );
+  savePlayer( 1, newCharacter );
 }
 
 function applyBlessing(blessing, stats) {
