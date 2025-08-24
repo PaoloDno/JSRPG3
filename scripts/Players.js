@@ -1,4 +1,4 @@
-let player = {
+let defaultPlayer = {
   name: null,
   class: null,
   gender: null,
@@ -10,32 +10,36 @@ let player = {
   bag: {},
   bagMax: 20,
   location: null,
-  blessings: null
+  blessings: null,
+  story: {}
 };
 
-// Load or initialize playerData
 let playerData = JSON.parse(localStorage.getItem("playerData")) || {
-  active: player,
+  active: { ...defaultPlayer },
   slots: [null, null, null] // up to 3 slots
 };
 
-// If a saved active exists, load it into player
-if (playerData.active) {
-  player = playerData.active;
+function getPlayer() {
+  return playerData.active;
+}
+
+
+export function updatePlayerData(data) {
+  playerData.active = { ...playerData.active, ...data };
+  localStorage.setItem("playerData", JSON.stringify(playerData));
+  return playerData.active;
 }
 
 function saveAttributes(attributes, vitalStats) {
-  player.attributes = attributes;
-  player.vitalStats = vitalStats;
-  playerData.active = player;
+  const p = getPlayer();
+  p.attributes = attributes;
+  p.vitalStats = vitalStats;
   localStorage.setItem("playerData", JSON.stringify(playerData));
 }
 
-function savePlayer(slot = 1, savedata = player) {
-  // Slot index is slot-1 (slots array is 0-based)
+function savePlayer(slot = 1, savedata = getPlayer()) {
   playerData.slots[slot - 1] = savedata;
   playerData.active = savedata;
-
   localStorage.setItem("playerData", JSON.stringify(playerData));
   console.log(`Game saved to slot ${slot}:`, savedata);
 }
@@ -43,11 +47,10 @@ function savePlayer(slot = 1, savedata = player) {
 function loadPlayer(slot = 1) {
   const saved = playerData.slots[slot - 1];
   if (saved) {
-    player = saved;
-    playerData.active = player;
+    playerData.active = saved;
     localStorage.setItem("playerData", JSON.stringify(playerData));
     console.log(`Loaded player from slot ${slot}`);
-    return player;
+    return saved;
   } else {
     console.log(`Slot ${slot} is empty`);
     return null;
@@ -62,6 +65,8 @@ function listSlots() {
 }
 
 export default {
+  getPlayer,
+  updatePlayerData,
   saveAttributes,
   savePlayer,
   loadPlayer,

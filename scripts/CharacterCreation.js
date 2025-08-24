@@ -1,5 +1,6 @@
 import Players from "./Players.js";
-const {saveAttributes, savePlayer} = Players;
+import gameUI from "./UI.js";
+const {saveAttributes, savePlayer, getPlayer, updatePlayerData} = Players;
 
 
 export function startNewGameScreen() {
@@ -124,7 +125,8 @@ function confirmCharacter() {
 
   console.log( "Character Created:", newCharacter, attributes);
   saveAttributes( attributes, vitalStats );
-  savePlayer( 1, newCharacter );
+  updatePlayerData(newCharacter);
+  gameUI.saveGameTitleScreen();
 }
 
 function applyBlessing(blessing, stats) {

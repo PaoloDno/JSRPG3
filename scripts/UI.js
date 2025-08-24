@@ -1,7 +1,15 @@
 import { startNewGameScreen } from "./CharacterCreation.js";
 import Players from "./Players.js";
+import { showStory } from "./Story.js";
+import {
+  showTownUI,
+  showInnUI,
+  showGuildUI,
+  showBlacksmithUI,
+  showStoreUI,
+} from "./Town.js";
 
-const { listSlots, loadPlayer } = Players;
+const { listSlots, loadPlayer, savePlayer } = Players;
 
 class GAMEUI {
   constructor() {
@@ -22,7 +30,8 @@ class GAMEUI {
     if (newGameBtn) {
       newGameBtn.addEventListener("click", () => {
         console.log("New Game Started!");
-        startNewGameScreen();
+        this.startStory();
+        //startNewGameScreen();
       });
     }
 
@@ -33,6 +42,22 @@ class GAMEUI {
         this.loadGameTitleScreen();
       });
     }
+  }
+
+  startStory() {
+    showStory(
+      this.app,
+      "The wind howls across the forgotten plains... Your journey begins.",
+      () => startNewGameScreen()
+    );
+  }
+
+  beginAdventure() {
+    showStory(
+      this.app,
+      "You awaken in the City of Dawnreach, a bustling hub of adventurers.",
+      () => this.showCityScreen()
+    );
   }
 
   bannerScreen() {
@@ -73,7 +98,7 @@ class GAMEUI {
     let slots = listSlots();
 
     // if all slots are null
-    const allEmpty = slots.every(s => s.player === null);
+    const allEmpty = slots.every((s) => s.player === null);
 
     if (allEmpty) {
       this.app.innerHTML = `
@@ -85,14 +110,18 @@ class GAMEUI {
       this.app.innerHTML = `
         <div class="flex column center full">
           <h2>Select Save Slot</h2>
-          <div class="flex row">
+          <div class="card-slots">
             ${slots
               .map(
                 (slot) => `
-                  <div class="slot-card">
+                  <div class="card-slot">
                     <h3>Slot ${slot.slot}</h3>
                     <p>${slot.player ? slot.player.name : "Empty"}</p>
-                    <button data-slot="${slot.slot}">Load</button>
+                    ${
+                      slot.player
+                        ? `<button data-slot=${slot.slot}>Load</button>`
+                        : "this slot is FREE"
+                    }
                   </div>
                 `
               )
@@ -102,7 +131,7 @@ class GAMEUI {
       `;
 
       // Add listeners to slot buttons
-      document.querySelectorAll(".slot-card button").forEach((btn) => {
+      document.querySelectorAll(".card-slot button").forEach((btn) => {
         btn.addEventListener("click", () => {
           const slotIndex = parseInt(btn.dataset.slot);
           console.log("Loading slot:", slotIndex);
@@ -111,10 +140,95 @@ class GAMEUI {
           if (loaded) {
             console.log("Game loaded:", loaded);
             // TODO: transition into actual game UI
+            this.beginAdventure();
           }
         });
       });
     }
+  }
+
+  saveGameTitleScreen() {
+    let slots = listSlots();
+
+    this.app.innerHTML = `
+    <div class="flex column center full">
+      <h2>Save Game</h2>
+      <div class="card-slots">
+        ${slots
+          .map(
+            (slot) => `
+              <div class="card-slot">
+                <h3>Slot ${slot.slot}</h3>
+                <p>${
+                  slot.player
+                    ? slot.player.name + " (Lv." + slot.player.level + ")"
+                    : "Empty"
+                }</p>
+                <button data-slot=${
+                  slot.slot
+                } class="saveBtn">Save Here</button>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+
+    // Add listeners to slot buttons
+    document.querySelectorAll(".card-slot button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const slotIndex = parseInt(btn.dataset.slot);
+        console.log("Saving to slot:", slotIndex);
+
+        // Save active player to chosen slot
+        savePlayer(slotIndex);
+
+        alert(`Game saved to Slot ${slotIndex}!`);
+        // Optionally return to game UI
+        this.beginAdventure();
+      });
+    });
+  }
+
+  // SHOWCITYSCREEN
+  showCityScreen() {
+    showTownUI(this.app, this.bot, this);
+  }
+
+  showInnScreen() {
+    showInnUI(this.app, this.bot, this);
+  }
+
+  showGuildScreen() {
+    showGuildUI(this.app, this.bot, this);
+  }
+
+  showStoreScreen() {
+    showStoreUI(this.app, this.bot, this);
+  }
+
+  showBlacksmithScreen() {
+    showBlacksmithUI(this.app, this.bot, this);
+  }
+
+  showMapScreen() {
+    this.app.innerHTML = `
+    <div class="map-ui">
+      <h2>World Map</h2>
+      <p>You see the vast lands of the kingdom before you.</p>
+    </div>
+  `;
+
+  this.bot.innerHTML = `
+    <div class="control-panel">
+      <button id="back-to-city">Back to City</button>
+    </div>
+  `;
+
+  this.bot.querySelector("#back-to-city").addEventListener("click", () => {
+    this.showCityScreen();
+    });
   }
 
   //css
@@ -144,7 +258,7 @@ class GAMEUI {
       .modal-box button {
         margin-top: 10px;
       }
-      .slot-card {
+      .card-slot {
         border: 1px solid #ccc;
         padding: 10px;
         margin: 5px;
@@ -152,6 +266,30 @@ class GAMEUI {
         min-width: 120px;
         text-align: center;
       }
+
+      .card-slot .saveBtn{
+        background-color: red;
+      }
+      .card-slots {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        justify-content: center;
+        aling-items: center;
+        gap: 1rem;
+        padding: 0 0.5rem;
+      }
+      @media (max-width: 768px) {
+        /* Styles for devices smaller than 768px (tablets & phones) */
+        .card-slots {
+        display: flex;
+        flex-direction: column;
+        gap:0.5rem;
+        }
+        .card-slot {
+          padding: 5px 10px;
+        }
+}
     `;
     document.head.appendChild(style);
   }
