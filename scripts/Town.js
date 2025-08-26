@@ -98,7 +98,7 @@ export function showGuildUI(app, bot, ui) {
 
   bot.querySelector("#quest-btn").addEventListener("click", takeQuest);
   bot.querySelector("#hire-btn").addEventListener("click", hireCompanion);
-  bot.querySelector("#enter-dungeon-btn").addEventListener("click", () => ui.EnterDungeonScreen(guildDungeonLocation[0], app, bot, ui ))
+  bot.querySelector("#enter-dungeon-btn").addEventListener("click", () => ui.EnterDungeonScreen())
   bot.querySelector("#back-to-city").addEventListener("click", () => ui.showCityScreen());
 }
 

@@ -9,7 +9,7 @@ import {
   showStoreUI,
 } from "./Town.js";
 
-import { processLocation } from "./Location.js";
+import { guildDungeonLocation, processLocation } from "./Location.js";
 
 
 const { listSlots, loadPlayer, savePlayer, setPlayer } = Players;
@@ -215,8 +215,8 @@ class GAMEUI {
     showBlacksmithUI(this.app, this.bot, this);
   }
 
-  EnterDungeonScreen() {
-    processLocation(location, this.app, this.bot, this);
+  EnterDungeonScreen(dungeon = guildDungeonLocation, room = 0) {
+    processLocation(dungeon, dungeon[room], this.app, this.bot, this);
   }
 
   // dungeons battle seq
@@ -293,14 +293,14 @@ class GAMEUI {
       .control-panel {
         position: relative;
         display: grid;
-        width: full;
+        width: 100%;
         grid-template-columns: 1fr 1fr;
         justify-content: center;
         align-items: center;
         gap: 1rem;
         padding: 0 0.5rem;
-        
       }
+
 
       @media (max-width: 768px) {
         /* Styles for devices smaller than 768px (tablets & phones) */

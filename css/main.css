@@ -50,10 +50,13 @@ h3 {
     rgb(12, 2, 70) 40%,
     rgb(29, 5, 136) 41%,
     rgb(2, 20, 58) 46%,
-    rgb(1, 6, 26) 100%);
+    rgb(1, 6, 26) 100%
+  );
 }
 
-#top, #content, #bottom {
+#top,
+#content,
+#bottom {
   padding: 10px;
   border-radius: 20px;
   border: 2px solid white;
@@ -89,7 +92,7 @@ h3 {
 #bottom {
   position: relative;
   display: flex;
-  height: clamp(120px, 140px, 140px );
+  height: clamp(120px, 140px, 140px);
   width: 85%;
   max-width: 720px;
   background: black;
@@ -158,13 +161,12 @@ h3 {
 }
 
 .control-panel {
-        position: relative;
-        display: grid;
-        width: full;
-        grid-template-columns: 1fr 1fr;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        padding: 0 0.5rem;
-        
-      }
+  position: relative;
+  display: grid;
+  width: full;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 0.5rem;
+}

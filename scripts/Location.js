@@ -1,33 +1,64 @@
 import { processEncounter } from "./Monster.js";
 
-export function processLocation(location, app, bot, ui) {
+// ===== Main location handler =====
+export function processLocation(locations, location, app, bot, ui) {
   app.innerHTML = `
-  <div class=" full column center">
-  <h1>${location.name}</h1>
-  <p>${location.description}</p>
-  </div>
+    <div class="full column center">
+      <h1>${location.name}</h1>
+      <p>${location.description}</p>
+      <div class="exits"></div>
+    </div>
   `;
 
+  bot.innerHTML = `<div class="flex full"></div>`;
+
   processEncounter(app, location.encounter || ["none"], () => {
-    
-    renderExits(app, location.exits, (next) => {
-      processLocation(next, app, bot, ui);
+    renderExits(app.querySelector(".exits"), locations, location.exits, bot, (next) => {
+      processLocation(locations, next, app, bot, ui);
     });
   });
 }
 
-function renderExits(app, exits, onMove) {
-  const exitsDiv = document.createElement("div");
-  exitsDiv.innerHTML = "<h3>Exits:</h3>";
-  for (let dir in exits) {
-    const btn = document.createElement("button");
-    btn.textContent = dir;
-    btn.onclick = () => onMove(exits[dir]);
-    exitsDiv.appendChild(btn);
-  }
-  app.appendChild(exitsDiv);
-}
+// ===== Exit Renderer =====
+function renderExits(container, locations, exits, bot, onMove) {
+  container.innerHTML = `<h3>Exits</h3>`;
 
+  const exitButtons = Object.keys(exits)
+    .map(dir => `<button data-dir="${dir}">${dir}</button>`)
+    .join("");
+
+  bot.innerHTML = `
+    <div class="control-panel">
+      ${exitButtons}
+    </div>
+  `;
+
+  bot.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dir = btn.getAttribute("data-dir");
+      const exit = exits[dir];
+
+      // special exits (switch map)
+      if (exit === "overworld-forest") {
+        onMove(worldLocations[1]); // back to overworld
+        return;
+      }
+      if (exit === "guildDungeon") {
+        onMove(guildDungeonLocation[0]);
+        return;
+      }
+      if (exit === "forestDungeon") {
+        onMove(forestLocation[0]);
+        return;
+      }
+
+      // normal dungeon/world movement
+      if (locations[exit]) {
+        onMove(locations[exit]);
+      }
+    });
+  });
+}
 
 
 
