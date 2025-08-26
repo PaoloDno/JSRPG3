@@ -1,7 +1,9 @@
+import { guildDungeonLocation } from "./Location.js";
+
 // ---------------- CITY MAIN ----------------
 export function showTownUI(app, bot, ui) {
   app.innerHTML = `
-    <div class="city-ui">
+    <div class="city-ui town">
       <h1>Welcome to the City</h1>
       <p>Choose a location:</p>
     </div>
@@ -12,18 +14,22 @@ export function showTownUI(app, bot, ui) {
       <button id="inn-btn">Inn</button>
       <button id="guild-btn">Guild</button>
       <button id="shop-btn">Shop</button>
+      <button id="blacksmith-btn">Blacksmith</button>
     </div>
   `;
 
   bot.querySelector("#inn-btn").addEventListener("click", () => ui.showInnScreen());
   bot.querySelector("#guild-btn").addEventListener("click", () => ui.showGuildScreen());
-  bot.querySelector("#shop-btn").addEventListener("click", () => ui.showShopScreen());
+  bot.querySelector("#shop-btn").addEventListener("click", () => ui.showStoreScreen());
+  bot.querySelector("#blacksmith-btn").addEventListener("click", () => ui.showBlacksmithScreen());
+
+
 }
 
 // ---------------- INN ----------------
 export function showInnUI(app, bot, ui) {
   app.innerHTML = `
-    <div class="inn-ui">
+    <div class="inn-ui town">
       <h2>Welcome to the Inn</h2>
       <p>What would you like to do?</p>
     </div>
@@ -75,6 +81,7 @@ export function showGuildUI(app, bot, ui) {
     <div class="control-panel">
       <button id="quest-btn">Take Quest</button>
       <button id="hire-btn">Hire Companion</button>
+      <button id="enter-dungeon-btn">Enter Dungeon</button>
       <button id="back-to-city">Go Back to City</button>
     </div>
   `;
@@ -87,8 +94,11 @@ export function showGuildUI(app, bot, ui) {
     alert("You hire a brave warrior!");
   }
 
+ 
+
   bot.querySelector("#quest-btn").addEventListener("click", takeQuest);
   bot.querySelector("#hire-btn").addEventListener("click", hireCompanion);
+  bot.querySelector("#enter-dungeon-btn").addEventListener("click", () => ui.EnterDungeonScreen(guildDungeonLocation[0], app, bot, ui ))
   bot.querySelector("#back-to-city").addEventListener("click", () => ui.showCityScreen());
 }
 
@@ -117,6 +127,10 @@ export function showStoreUI(app, bot, ui) {
     alert("You sell an old sword!");
   }
 
+  function buyAccesories() {
+    alert("You sell an old sword!");
+  }
+
   bot.querySelector("#buy-item-btn").addEventListener("click", buyItem);
   bot.querySelector("#sell-item-btn").addEventListener("click", sellItem);
   bot.querySelector("#back-to-city").addEventListener("click", () => ui.showCityScreen());
@@ -133,21 +147,32 @@ export function showBlacksmithUI(app, bot, ui) {
 
   bot.innerHTML = `
     <div class="control-panel">
-      <button id="quest-btn">Take Quest</button>
-      <button id="hire-btn">Hire Companion</button>
+      <button id="weaponBuy-btn">Buy Weapon</button>
+      <button id="gearBuy-btn">Buy Gear</button>
+      <button id="repair-btn">Repair</button>
+      <button id="sellItem-btn">Sell Item</button>
       <button id="back-to-city">Go Back to City</button>
     </div>
   `;
 
-  function takeQuest() {
-    alert("You accept a new quest!");
+  function weaponBuy() {
+    alert("You buy a weapon!");
   }
 
-  function hireCompanion() {
+  function gearBuy() {
+    alert("You buy a gear!");
+  }
+
+  function repairItem() {
     alert("You hire a brave warrior!");
   }
-
-  bot.querySelector("#quest-btn").addEventListener("click", takeQuest);
-  bot.querySelector("#hire-btn").addEventListener("click", hireCompanion);
+  
+  function sellItem() {
+    alert("You hire a brave warrior!");
+  }
+  bot.querySelector("#weaponBuy-btn").addEventListener("click", weaponBuy);
+  bot.querySelector("#gearBuy-btn").addEventListener("click", gearBuy);
+  bot.querySelector("#repair-btn").addEventListener("click", repairItem);
+  bot.querySelector("#sellItem-btn").addEventListener("click", sellItem);
   bot.querySelector("#back-to-city").addEventListener("click", () => ui.showCityScreen());
 }

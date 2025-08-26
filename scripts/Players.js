@@ -11,24 +11,24 @@ let defaultPlayer = {
   bagMax: 20,
   location: null,
   blessings: null,
-  story: {}
+  story: 0
 };
 
 let playerData = JSON.parse(localStorage.getItem("playerData")) || {
   active: { ...defaultPlayer },
-  slots: [null, null, null] // up to 3 slots
+  slots: [null, null, null]
 };
 
 function getPlayer() {
   return playerData.active;
 }
 
-
-export function updatePlayerData(data) {
-  playerData.active = { ...playerData.active, ...data };
+function setPlayer(activeData) {
+  playerData.active = { ...playerData.active, ...activeData };
   localStorage.setItem("playerData", JSON.stringify(playerData));
   return playerData.active;
 }
+
 
 function saveAttributes(attributes, vitalStats) {
   const p = getPlayer();
@@ -66,7 +66,7 @@ function listSlots() {
 
 export default {
   getPlayer,
-  updatePlayerData,
+  setPlayer,
   saveAttributes,
   savePlayer,
   loadPlayer,

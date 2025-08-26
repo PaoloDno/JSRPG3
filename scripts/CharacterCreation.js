@@ -114,13 +114,18 @@ function confirmCharacter() {
     class: selectedClass,
     blessing: selectedBlessing,
     skill: selectedSkill,
+    equipment: {},
+    bag: {},
+    bagMax: 20,
     attributes: attributes,
     vitalStats: vitalStats,
     image: {
       avatar: `../misc/character/avatar/${selectedGender}-${selectedClass}.png`,
       image: `../misc/character/fullbody/${selectedGender}-${selectedClass}.png`,
       image2: `../misc/character/alt/${selectedGender}-${selectedClass}.png`
-    }
+    },
+    story: 1,
+    location: 1
   };
 
   console.log( "Character Created:", newCharacter, attributes);

@@ -156,3 +156,15 @@ h3 {
   height: 100%;
   width: 100%;
 }
+
+.control-panel {
+        position: relative;
+        display: grid;
+        width: full;
+        grid-template-columns: 1fr 1fr;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 0.5rem;
+        
+      }

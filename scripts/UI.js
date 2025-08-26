@@ -9,7 +9,10 @@ import {
   showStoreUI,
 } from "./Town.js";
 
-const { listSlots, loadPlayer, savePlayer } = Players;
+import { processLocation } from "./Location.js";
+
+
+const { listSlots, loadPlayer, savePlayer, setPlayer } = Players;
 
 class GAMEUI {
   constructor() {
@@ -212,6 +215,13 @@ class GAMEUI {
     showBlacksmithUI(this.app, this.bot, this);
   }
 
+  EnterDungeonScreen() {
+    processLocation(location, this.app, this.bot, this);
+  }
+
+  // dungeons battle seq
+
+  
   showMapScreen() {
     this.app.innerHTML = `
     <div class="map-ui">
@@ -275,10 +285,23 @@ class GAMEUI {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         justify-content: center;
-        aling-items: center;
+        align-items: center;
         gap: 1rem;
         padding: 0 0.5rem;
       }
+      
+      .control-panel {
+        position: relative;
+        display: grid;
+        width: full;
+        grid-template-columns: 1fr 1fr;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 0.5rem;
+        
+      }
+
       @media (max-width: 768px) {
         /* Styles for devices smaller than 768px (tablets & phones) */
         .card-slots {
