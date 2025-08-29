@@ -1,9 +1,9 @@
 import { processEncounter } from "./Monster.js";
 
-// ===== Main location handler =====
+// Main location handler
 export function processLocation(locations, location, app, bot, ui) {
   app.innerHTML = `
-    <div class="full column center">
+    <div class="full flex column center">
       <h1>${location.name}</h1>
       <p>${location.description}</p>
       <div class="exits"></div>
@@ -12,14 +12,16 @@ export function processLocation(locations, location, app, bot, ui) {
 
   bot.innerHTML = `<div class="flex full"></div>`;
 
-  processEncounter(app, location.encounter || ["none"], () => {
+  processEncounter(app, location.encounter || ["none"], location.monsterLvl, () => {
+    // process Encoutner fight
     renderExits(app.querySelector(".exits"), locations, location.exits, bot, (next) => {
+    
       processLocation(locations, next, app, bot, ui);
     });
   });
 }
 
-// ===== Exit Renderer =====
+// Exit Renderer
 function renderExits(container, locations, exits, bot, onMove) {
   container.innerHTML = `<h3>Exits</h3>`;
 
@@ -115,7 +117,9 @@ export const guildDungeonLocation = {
     exits: {
       north: 1,
       south: 2
-    }
+    },
+    monsterLvl: 0
+    
   },
   1: {
     name: "Room 1",
@@ -125,31 +129,107 @@ export const guildDungeonLocation = {
       south: 0,
       east: 3,
       west: 4
-    }
+    },
+    monsterLvl: 0
   },
   2: {
     name: "Room 2",
-    description: "A damp cave with dripping water.",
+    description: "[hallway 1st-floor].",
     encounter: ["none", "monster"],
     exits: {
       north: 0
-    }
+    },
+    monsterLvl: 0
   },
   3: {
     name: "Room 3",
-    description: "A small chamber filled with bones.",
-    encounter: ["none", "monster"],
+    description: "[A small chamber-1st floor]",
+    encounter: ["none", "monster", "monster"],
     exits: {
-      west: 1
-    }
+      west: 1,
+    },
+    monsterLvl: 1
   },
   4: {
     name: "Room 4",
-    description: "A hidden room with a locked chest.",
+    description: "[Empty room - 1st floor]",
+    encounter: ["none", "monster", "monster"],
+    exits: {
+      east: 1,
+      north: 5
+    },
+    monsterLvl: 0
+  },
+  5: {
+    name: "Room 5",
+    description: "[narrow hallway - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 6,
+      south: 4,
+      north: 7
+    },
+    monsterLvl: 0
+  },
+  6: {
+    name: "Room 6",
+    description: "[empty room - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 9,
+      west: 5
+    },
+    monsterLvl: 0
+  },
+  7: {
+    name: "Room 7",
+    description: "[Staircase - Balcony  - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 8,
+      south: 5
+    },
+    monsterLvl: 0
+  },
+  8: {
+    name: "Room 8",
+    description: "[Staircase - Balcony  - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 8,
+      south: 5
+    },
+    monsterLvl: 0
+  },
+  9: {
+    name: "Room 9",
+    description: "[Corner Room  - 1st floor]",
     encounter: ["none", "monster"],
     exits: {
-      east: 1
-    }
+      west: 6,
+      south: 10
+    },
+    monsterLvl: 2
+  },
+  10: {
+    name: "Room 10",
+    description: "[Mezzanines - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 11,
+      north: 9,
+      south: 3
+    },
+    monsterLvl: 2
+  },
+  11: {
+    name: "Room 10",
+    description: "[Boss Room - 1st floor]",
+    encounter: ["none"],
+    exits: {
+      east: 10
+    },
+    monsterLvl: 2
   }
 };
 
@@ -162,6 +242,7 @@ export const forestLocation = {
     exits: {
       north: 1,
       south: "overworld-forest"
-    }
+    },
+    monsterLvl: 0
   }
 };

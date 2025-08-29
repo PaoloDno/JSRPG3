@@ -1,6 +1,6 @@
 import Players from "./Players.js";
 import gameUI from "./UI.js";
-const {saveAttributes, savePlayer, getPlayer, updatePlayerData} = Players;
+const {saveAttributes, savePlayer, getPlayer, setPlayer} = Players;
 
 
 export function startNewGameScreen() {
@@ -108,7 +108,7 @@ function confirmCharacter() {
   let attributes = applyBlessing(selectedBlessing, { ...baseStats });
   let vitalStats = StatCalc(attributes);
 
-  const newCharacter = {
+  let newCharacter = {
     name,
     gender: selectedGender,
     class: selectedClass,
@@ -124,13 +124,14 @@ function confirmCharacter() {
       image: `../misc/character/fullbody/${selectedGender}-${selectedClass}.png`,
       image2: `../misc/character/alt/${selectedGender}-${selectedClass}.png`
     },
+    party: ["Wolf"],
     story: 1,
     location: 1
   };
 
   console.log( "Character Created:", newCharacter, attributes);
   saveAttributes( attributes, vitalStats );
-  updatePlayerData(newCharacter);
+  setPlayer(newCharacter);
   gameUI.saveGameTitleScreen();
 }
 
@@ -147,9 +148,12 @@ function applyBlessing(blessing, stats) {
 
 function StatCalc(stats) {
   return { 
-    health: 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2),
-    mana: 50 + (stats.mgk * 10),
-    stamina: 50 + (stats.str * 7),
+    hp: 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2),
+    mp: 50 + (stats.mgk * 10),
+    sp: 50 + (stats.str * 7),
+    hpMax: 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2),
+    mpMax: 50 + (stats.mgk * 10),
+    spMax: 50 + (stats.str * 7),
     armor: 2 + (stats.def * 2) + stats.dex,
     mgkRes: 2 + (stats.res * 2) + stats.mgk,
     critRate: Math.floor(15 + (stats.dex * 1.5) + (stats.spd * 0.5)),
