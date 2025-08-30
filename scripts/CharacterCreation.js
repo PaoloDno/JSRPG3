@@ -1,6 +1,7 @@
 import Players from "./Players.js";
 import gameUI from "./UI.js";
 const {saveAttributes, savePlayer, getPlayer, setPlayer} = Players;
+import { Party } from "./Party.js"
 
 
 export function startNewGameScreen() {
@@ -124,13 +125,15 @@ function confirmCharacter() {
       image: `../misc/character/fullbody/${selectedGender}-${selectedClass}.png`,
       image2: `../misc/character/alt/${selectedGender}-${selectedClass}.png`
     },
-    party: ["Wolf"],
+    party: [],
     story: 1,
     location: 1
   };
 
   console.log( "Character Created:", newCharacter, attributes);
   saveAttributes( attributes, vitalStats );
+  Party.add("Wolf", 5);
+  Party.add("Knight", 10); 
   setPlayer(newCharacter);
   gameUI.saveGameTitleScreen();
 }

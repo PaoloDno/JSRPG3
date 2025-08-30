@@ -1,105 +1,158 @@
+// ===== Party.js =====
 
+import Players from "./Players.js";
+const { getPlayer, setPlayer } = Players;
 
-export const Party = [];
+// ===== Companion Base Data =====
+const COMPANION_BASE = {
+  Wolf:   { hp: 50, mp: 0, str: 6, mgk: 0, spd: 8, dex: 5, def: 3, res: 2, dur: 3, img: "🐺" },
+  Mage:   { hp: 30, mp: 40, str: 2, mgk: 8, spd: 5, dex: 5, def: 2, res: 4, dur: 2, img: "🧙" },
+  Knight: { hp: 70, mp: 10, str: 8, mgk: 1, spd: 4, dex: 4, def: 7, res: 4, dur: 6, img: "🛡️" }
+};
 
-// ===== Functions to modify the party =====
-export function addToParty(member) {
-  Party.push(member);
+// ===== Helpers =====
+function getPlayerData() {
+  return getPlayer();
 }
 
-export function removeFromParty(name) {
-  const index = Party.findIndex(m => m.name === name);
-  if (index !== -1) Party.splice(index, 1);
+function persistParty(player) {
+  setPlayer({ party: player.party || [] });
 }
 
-export function updatePartyMember(name, newData) {
-  const index = Party.findIndex(m => m.name === name);
-  if (index !== -1) Party[index] = { ...Party[index], ...newData };
-}
-
-// ===== Party Factory =====
-export function initializeCharacter(baseCharacter) {
-  return {
-    name: baseCharacter.name || "Unknown",
-    lvl: baseCharacter.level || 1,
-    hitpoint: baseCharacter.vitalStats?.hp || 100,
-    hitpointMax: baseCharacter.vitalStats?.hpMax || 100,
-    manapoint: baseCharacter.vitalStats?.mp || 50,
-    manapointMax: baseCharacter.vitalStats?.mpMax || 50,
-    spPoint: baseCharacter.vitalStats?.sp || 50,
-    spPointMax: baseCharacter.vitalStats?.spMax || 50,
-    stats: {
-      str: baseCharacter.attributes?.str || 10,
-      mgk: baseCharacter.attributes?.mgk || 10,
-      spd: baseCharacter.attributes?.spd || 10,
-      dex: baseCharacter.attributes?.dex || 10,
-      def: baseCharacter.attributes?.def || 10,
-      res: baseCharacter.attributes?.res || 10,
-      dur: baseCharacter.attributes?.dur || 10
-    },
-    armor: baseCharacter.vitalStats?.armor || 0,
-    mgkRes: baseCharacter.vitalStats?.mgkRes || 0,
-    critRate: baseCharacter.vitalStats?.critRate || 0,
-    critDmg: baseCharacter.vitalStats?.critDmg || 0,
-    actionSPD: baseCharacter.vitalStats?.actionSPD || 0,
-    img: baseCharacter.display?.avatarHover || "🙂"
-  };
-}
-
-
-export function initializeCompanion(name, Level) {
-  // Example companion scaling
-  const companionBase = {
-    "Wolf":  { hp: 50, mp: 0, str: 6, mgk: 0, spd: 8, dex: 5, def: 3, res: 2, dur: 3, img: "🐺" },
-    "Mage":  { hp: 30, mp: 40, str: 2, mgk: 8, spd: 5, dex: 5, def: 2, res: 4, dur: 2, img: "🧙" },
-    "Knight":{ hp: 70, mp: 10, str: 8, mgk: 1, spd: 4, dex: 4, def: 7, res: 4, dur: 6, img: "🛡️" }
-  };
-
-  let base = companionBase[name] || companionBase["Wolf"];
-  let scale = 1 + (Level * 0.2);
-  let stats = {
-      str: Math.floor(base.str * scale),
-      mgk: Math.floor(base.mgk * scale),
-      spd: Math.floor(base.spd * scale),
-      dex: Math.floor(base.dex * scale),
-      def: Math.floor(base.def * scale),
-      res: Math.floor(base.res * scale),
-      dur: Math.floor(base.dur * scale)
-  };
-
-   let vitalStats = StatCalc(stats);
+function calculateStats(stats) {
+  const hp = 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2);
+  const mp = 50 + (stats.mgk * 10);
+  const sp = 50 + (stats.str * 7);
 
   return {
-    name,
-    lvl: Level,
-    ...vitalStats,
-    stats,
-    img: base.img
-  };
-}
-
-//export a 
-
-function StatCalc(stats) {
-  return { 
-    hp: 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2),
-    mp: 50 + (stats.mgk * 10),
-    sp: 50 + (stats.str * 7),
-    hpMax: 20 + (stats.dur * 10) + (stats.def * 5) + (stats.res * 5) + (stats.str * 2),
-    mpMax: 50 + (stats.mgk * 10),
-    spMax: 50 + (stats.str * 7),
+    hp, mp, sp,
+    hpMax: hp,
+    mpMax: mp,
+    spMax: sp,
     armor: 2 + (stats.def * 2) + stats.dex,
     mgkRes: 2 + (stats.res * 2) + stats.mgk,
     critRate: Math.floor(15 + (stats.dex * 1.5) + (stats.spd * 0.5)),
     critDmg: Math.floor(125 + (stats.dex * 2) + (stats.str * 0.5) + (stats.mgk * 0.5)),
-    actionSPD: 5 + stats.spd * 3 + stats.dex * 1
+    actionSPD: 5 + stats.spd * 3 + stats.dex
   };
 }
 
-export const GetParty = [
-  // char,
-  // party
-]
+function scaleStats(baseStats, level) {
+  const scale = 1 + (level * 0.2);
+  const scaled = {};
+  for (const key in baseStats) {
+    scaled[key] = Math.floor(baseStats[key] * scale);
+  }
+  return scaled;
+}
 
-// set party
-// delete party
+// ===== Party API =====
+export const Party = {
+  all: () => getPlayerData().party || [],
+
+  add: (name, level = 1) => {
+    const player = getPlayer();
+    player.party = player.party || [];
+
+    // Save only {name, lvl}
+    player.party.push({ name, lvl: level });
+    console.log(player)
+    persistParty(player);
+    console.log(`${name} (Lvl ${level}) added to party.`);
+    console.log(Party.all());
+    console.log(Party.battleReady());
+  },
+
+  remove: (name) => {
+    const player = getPlayerData();
+    if (!player.party) return;
+    player.party = player.party.filter(member => member.name !== name);
+    persistParty(player);
+    console.log(`${name} removed from party.`);
+  },
+
+  update: (name, newData) => {
+    const player = getPlayerData();
+    if (!player.party) return;
+    const index = player.party.findIndex(m => m.name === name);
+    if (index !== -1) {
+      player.party[index] = { ...player.party[index], ...newData };
+      persistParty(player);
+    }
+  },
+
+  clear: () => {
+    const player = getPlayerData();
+    player.party = [];
+    persistParty(player);
+    console.log(`Party cleared.`);
+  },
+
+  createPlayer: (base = {}) => ({
+    name: base.name || "Unknown",
+    lvl: base.level || 1,
+    hitpoint: base.vitalStats?.hp || 100,
+    hitpointMax: base.vitalStats?.hpMax || 100,
+    manapoint: base.vitalStats?.mp || 50,
+    manapointMax: base.vitalStats?.mpMax || 50,
+    spPoint: base.vitalStats?.sp || 50,
+    spPointMax: base.vitalStats?.spMax || 50,
+    stats: {
+      str: base.attributes?.str || 10,
+      mgk: base.attributes?.mgk || 10,
+      spd: base.attributes?.spd || 10,
+      dex: base.attributes?.dex || 10,
+      def: base.attributes?.def || 10,
+      res: base.attributes?.res || 10,
+      dur: base.attributes?.dur || 10
+    },
+    armor: base.vitalStats?.armor || 0,
+    mgkRes: base.vitalStats?.mgkRes || 0,
+    critRate: base.vitalStats?.critRate || 0,
+    critDmg: base.vitalStats?.critDmg || 0,
+    actionSPD: base.vitalStats?.actionSPD || 0,
+    img: base.display?.avatarHover || "🙂"
+  }),
+
+  createCompanion: (name, level) => {
+    const base = COMPANION_BASE[name] || COMPANION_BASE.Wolf;
+    const { img, ...statsBase } = base;
+    const stats = scaleStats(statsBase, level);
+
+    return {
+      name,
+      lvl: level,
+      img,
+      stats,
+      ...calculateStats(stats)
+    };
+  },
+
+  battleReady: () => {
+    const player = getPlayerData();
+    const party = player.party || [];
+
+    // Player combat data
+    const playerStats = Party.createPlayer(player);
+    const fullParty = [playerStats];
+
+    // Companion combat data
+    party.forEach(member => {
+      if (!member?.name || !member?.lvl) return;
+
+      const base = COMPANION_BASE[member.name] || COMPANION_BASE.Wolf;
+      const { img, ...statsBase } = base;
+      const scaledStats = scaleStats(statsBase, member.lvl);
+
+      fullParty.push({
+        name: member.name,
+        lvl: member.lvl,
+        img,
+        stats: scaledStats,
+        ...calculateStats(scaledStats)
+      });
+    });
+
+    return fullParty;
+  }
+};

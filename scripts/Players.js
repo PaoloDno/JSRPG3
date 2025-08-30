@@ -1,3 +1,4 @@
+
 let defaultPlayer = {
   name: null,
   class: null,

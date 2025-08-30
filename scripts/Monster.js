@@ -1,14 +1,9 @@
-import Players from "./Players";
+import { triggerCombat } from "./Combat.js";
 
-const { getPlayer } = Players;
-
-let player = getPlayer();
-
-import { initializeCharacter, } from "./Party"
-
-
-
+import { Party } from "./Party.js";
 // Encounter
+
+
 export function processEncounter(app, encounterList, monsterLvl, onComplete) {
   const type = encounterList[Math.floor(Math.random() * encounterList.length)];
 
@@ -18,7 +13,9 @@ export function processEncounter(app, encounterList, monsterLvl, onComplete) {
 
   } else if (type === "monster") {
     
-    triggerCombat(party, monsters);
+    let battleParty = Party.battleReady();
+    console.log(battleParty);
+    triggerCombat(battleParty, monsters);
 
     app.innerHTML += `<p>A monster appears!</p><button id="fightBtn">Fight</button>`;
     document.getElementById("fightBtn").onclick = () => {
